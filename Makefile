@@ -16,25 +16,25 @@ install: build
 	install bin/yubihsm-connector /usr/local/bin
 
 cert:
-	@./tools/generate-certificate
+	./tools/generate-certificate
 
 run: build
-	@./bin/yubihsm-connector -d
+	./bin/yubihsm-connector -d
 
 srun: cert build
-	@./bin/yubihsm-connector -d --cert=var/cert.crt --key=var/cert.key
+	./bin/yubihsm-connector -d --cert=var/cert.crt --key=var/cert.key
 
 fmt:
-	@go fmt ./src/...
+	go fmt ./src/...
 
 vet:
-	@go vet ./src/...
+	go vet ./src/...
 
 test: vet
-	@gb test ${GB_BUILD_FLAGS} -v
+	gb test ${GB_BUILD_FLAGS} -v
 
 docker-clean:
-	@docker rmi yubico/yubihsm-connector
+	docker rmi yubico/yubihsm-connector
 
 docker-build:
 	@docker build -t yubico/yubihsm-connector -f Dockerfile .
@@ -43,7 +43,7 @@ docker-run:
 	@docker run --rm -it --privileged -v ${PWD}:/yubihsm-connector -v /dev/bus/usb/:/dev/bus/usb/ -p 12345:12345 yubico/yubihsm-connector
 
 clean:
-	@rm -rf bin/* pkg/* src/yubihsm-connector/*.syso \
+	rm -rf pkg/* src/yubihsm-connector/*.syso \
 		src/yubihsm-connector/versioninfo.json \
 		src/yubihsm-connector/version.go
 
