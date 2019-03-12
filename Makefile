@@ -7,8 +7,8 @@ MAKEFLAGS += --no-builtin-rules
 all: build
 
 build:
-	@gb generate ${GB_GEN_FLAGS}
-	@gb build ${GB_BUILD_FLAGS}
+	gb generate ${GB_GEN_FLAGS}
+	CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" gb build ${GB_BUILD_FLAGS}
 
 rebuild: clean build
 
