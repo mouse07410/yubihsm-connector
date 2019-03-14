@@ -1,5 +1,7 @@
 # yubihsm-connector
 
+DIR := ${CURDIR}
+
 MAKEFLAGS += -s
 MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
@@ -8,12 +10,16 @@ all: build
 
 build:
 	gb generate ${GB_GEN_FLAGS}
-	CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" gb build ${GB_BUILD_FLAGS}
+	#CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" gb build ${GB_BUILD_FLAGS}
+	cd src/yubihsm-connector && CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" GOPATH="${GOPATH}:${DIR}/vendor" go build && cp yubihsm-connector ../../bin && cd ../..
 
 rebuild: clean build
 
 install: build
 	install bin/yubihsm-connector /usr/local/bin
+
+update:
+	gb vendor update --all
 
 cert:
 	./tools/generate-certificate
@@ -29,6 +35,9 @@ fmt:
 
 vet:
 	go vet ./src/...
+
+utest:
+	echo "PWD=${DIR}"
 
 test: vet
 	gb test ${GB_BUILD_FLAGS} -v
