@@ -1,5 +1,7 @@
 # yubihsm-connector
 
+DIR := ${CURDIR}
+
 MAKEFLAGS += -s
 MAKEFLAGS += --no-builtin-rules
 .SUFFIXES:
@@ -11,32 +13,42 @@ gen:
 
 build: gen
 	@go build -mod=vendor -o bin/yubihsm-connector ./...
+#build:
+#	gb generate ${GB_GEN_FLAGS}
+#	#CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" gb build ${GB_BUILD_FLAGS}
+#	cd src/yubihsm-connector && CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" GOPATH="${GOPATH}:${DIR}/vendor" go build && cp yubihsm-connector ../../bin && cd ../..
 
 rebuild: clean build
 
 install: build
 	install bin/yubihsm-connector /usr/local/bin
 
+update:
+	gb vendor update --all
+
 cert:
-	@./tools/generate-certificate
+	./tools/generate-certificate
 
 run: build
-	@./bin/yubihsm-connector -d
+	./bin/yubihsm-connector -d
 
 srun: cert build
-	@./bin/yubihsm-connector -d --cert=var/cert.crt --key=var/cert.key
+	./bin/yubihsm-connector -d --cert=var/cert.crt --key=var/cert.key
 
 fmt:
-	@go fmt ./src/...
+	go fmt ./src/...
 
 vet: gen
-	@go vet ./src/...
+	go vet ./src/...
 
 test: vet
-	@go test -v ./...
+	go test -v ./...
+
+utest:
+	echo "PWD=${DIR}"
 
 docker-clean:
-	@docker rmi yubico/yubihsm-connector
+	docker rmi yubico/yubihsm-connector
 
 docker-build:
 	@docker build -t yubico/yubihsm-connector -f Dockerfile .
@@ -45,7 +57,7 @@ docker-run:
 	@docker run --rm -it --privileged -v ${PWD}:/yubihsm-connector -v /dev/bus/usb/:/dev/bus/usb/ -p 12345:12345 yubico/yubihsm-connector
 
 clean:
-	@rm -rf bin/* pkg/* src/yubihsm-connector/*.syso \
+	rm -rf pkg/* src/yubihsm-connector/*.syso \
 		src/yubihsm-connector/versioninfo.json \
 		src/yubihsm-connector/version.go
 

@@ -14,7 +14,7 @@
 
 package usb
 
-// #include <libusb-1.0/libusb.h>
+// #include "/opt/local/include/libusb-1.0/libusb.h"
 import "C"
 
 type Class uint8
