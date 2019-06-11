@@ -9,13 +9,12 @@ MAKEFLAGS += --no-builtin-rules
 all: build
 
 gen:
-	@go generate -mod=vendor ./...
+	go generate -mod=vendor ./...
 
 build: gen
-	@go build -mod=vendor -o bin/yubihsm-connector ./...
-#build:
-#	gb generate ${GB_GEN_FLAGS}
-#	#CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" gb build ${GB_BUILD_FLAGS}
+	go build -mod=vendor -o bin/yubihsm-connector ./...
+build:
+	CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" go build -mod=vendor -o bin/yubihsm-connector ./...
 #	cd src/yubihsm-connector && CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" GOPATH="${GOPATH}:${DIR}/vendor" go build && cp yubihsm-connector ../../bin && cd ../..
 
 rebuild: clean build
