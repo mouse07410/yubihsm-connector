@@ -9,10 +9,10 @@ MAKEFLAGS += --no-builtin-rules
 all: build
 
 gen:
-	go generate -mod=vendor ./...
+	go generate -mod=vendor
 
 build: gen
-	go build -mod=vendor -o bin/yubihsm-connector ./...
+	go build -mod=vendor -o bin/yubihsm-connector
 build:
 	CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" go build -mod=vendor -o bin/yubihsm-connector ./...
 #	cd src/yubihsm-connector && CGO_CFLAGS="-I/opt/local/include" CGO_LDFLAGS="-L/opt/local/lib" GOPATH="${GOPATH}:${DIR}/vendor" go build && cp yubihsm-connector ../../bin && cd ../..
@@ -35,13 +35,13 @@ srun: cert build
 	./bin/yubihsm-connector -d --cert=var/cert.crt --key=var/cert.key
 
 fmt:
-	go fmt ./src/...
+	go fmt
 
 vet: gen
-	go vet ./src/...
+	go vet
 
 test: vet
-	go test -v ./...
+	go test -v
 
 utest:
 	echo "PWD=${DIR}"
